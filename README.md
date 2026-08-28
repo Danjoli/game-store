@@ -52,3 +52,16 @@ Authentication
 Checkout
 Automated tests
 Responsive gamer-inspired interface
+
+## Development workflow
+
+This project uses a GitHub-based development workflow:
+
+1. Create an Issue
+2. Move it to In Progress
+3. Create a dedicated branch
+4. Implement and test the changes
+5. Open a Pull Request
+6. Review the changes
+7. Merge into `main`
+8. Move the Issue to Done
