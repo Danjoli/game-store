@@ -20,18 +20,21 @@ import {
   logout,
   updateCategory,
   updateGame,
+  getAdminOrders,
+  updateOrderStatus,
 } from "./adminApi";
 import { LoginPanel } from "./LoginPanel";
 import type {
   AdminCategory,
   AdminGame,
   AdminUser,
+  AdminOrder,
   DashboardStats,
   GamePayload,
 } from "./types";
 import "./admin.css";
 
-type Tab = "dashboard" | "games" | "categories";
+type Tab = "dashboard" | "games" | "categories" | "orders";
 const emptyGame = (categoryId = 0): GamePayload => ({
   category_id: categoryId,
   title: "",
@@ -55,6 +58,7 @@ export function AdminApp() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [games, setGames] = useState<AdminGame[]>([]);
   const [categories, setCategories] = useState<AdminCategory[]>([]);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(Boolean(token));
   const [error, setError] = useState("");
 
@@ -65,15 +69,17 @@ export function AdminApp() {
       const currentUser = await getMe(accessToken);
       if (!currentUser.isAdmin)
         throw new Error("Acesso administrativo não autorizado.");
-      const [dashboard, gameList, categoryList] = await Promise.all([
+      const [dashboard, gameList, categoryList, orderList] = await Promise.all([
         getDashboard(accessToken),
         getAdminGames(accessToken),
         getAdminCategories(accessToken),
+        getAdminOrders(accessToken),
       ]);
       setUser(currentUser);
       setStats(dashboard);
       setGames(gameList);
       setCategories(categoryList);
+      setOrders(orderList);
     } catch (reason) {
       localStorage.removeItem("admin_token");
       setToken("");
@@ -133,6 +139,7 @@ export function AdminApp() {
             <LayoutDashboard />
             Visão geral
           </button>
+          <button className={tab === "orders" ? "active" : ""} onClick={() => setTab("orders")}><ShoppingCart />Pedidos</button>
           <button
             className={tab === "games" ? "active" : ""}
             onClick={() => setTab("games")}
@@ -166,7 +173,7 @@ export function AdminApp() {
                 ? "Visão geral"
                 : tab === "games"
                   ? "Jogos"
-                  : "Categorias"}
+                  : tab === "categories" ? "Categorias" : "Pedidos"}
             </h1>
           </div>
           <a href="/">Ver loja</a>
@@ -188,6 +195,7 @@ export function AdminApp() {
             onChange={refresh}
           />
         )}
+        {tab === "orders" && <OrdersPanel token={token} orders={orders} onChange={refresh} />}
       </main>
     </div>
   );
@@ -204,6 +212,7 @@ function Dashboard({ stats }: { stats: DashboardStats | null }) {
       icon: ShoppingCart,
     },
     { label: "Itens em carrinhos", value: stats?.cartItems, icon: Boxes },
+    { label: "Pedidos", value: stats?.orders, icon: ShoppingCart },
   ];
   return (
     <section className="stat-grid">
@@ -505,4 +514,17 @@ function GamesPanel({
       </div>
     </section>
   );
+}
+
+function OrdersPanel({ token, orders, onChange }: { token: string; orders: AdminOrder[]; onChange: () => void }) {
+  const labels = { paid: "Pago", processing: "Processando", completed: "Concluído", cancelled: "Cancelado" };
+  const change = async (order: AdminOrder, status: AdminOrder["status"]) => { await updateOrderStatus(token, order.id, status); onChange(); };
+  return <section className="orders-admin-list">
+    {orders.length === 0 && <div className="admin-empty">Nenhum pedido recebido.</div>}
+    {orders.map((order) => <article className="admin-order-card" key={order.id}>
+      <header><div><small>PEDIDO #{order.id}</small><h3>{order.customer.name}</h3><span>{order.customer.email}</span></div><strong>{order.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></header>
+      <div className="admin-order-items">{order.items.map((item) => <span key={item.id}>{item.quantity}× {item.title}</span>)}</div>
+      <footer><time>{new Date(order.createdAt).toLocaleString("pt-BR")}</time><select value={order.status} onChange={(event) => void change(order, event.target.value as AdminOrder["status"])}>{Object.entries(labels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></footer>
+    </article>)}
+  </section>;
 }

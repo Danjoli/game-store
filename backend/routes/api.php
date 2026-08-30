@@ -3,10 +3,12 @@
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\GameController as AdminGameController;
+use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -26,10 +28,15 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::put('/cart/items/{game}', [CartController::class, 'updateItem']);
     Route::delete('/cart/items/{game}', [CartController::class, 'destroyItem']);
     Route::delete('/cart', [CartController::class, 'clear']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{order}', [OrderController::class, 'show']);
+    Route::post('/orders', [OrderController::class, 'store']);
 
     Route::prefix('admin')->middleware('admin')->group(function (): void {
         Route::get('/dashboard', DashboardController::class);
         Route::apiResource('categories', AdminCategoryController::class)->except('show');
         Route::apiResource('games', AdminGameController::class)->except('show');
+        Route::get('/orders', [AdminOrderController::class, 'index']);
+        Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus']);
     });
 });

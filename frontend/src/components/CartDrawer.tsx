@@ -7,9 +7,10 @@ type CartDrawerProps = {
   open: boolean;
   onClose: () => void;
   onRemove: (id: number) => void;
+  onCheckout: () => void;
 };
 
-export function CartDrawer({ cart, open, onClose, onRemove }: CartDrawerProps) {
+export function CartDrawer({ cart, open, onClose, onRemove, onCheckout }: CartDrawerProps) {
   if (!open) return null;
   const exploreGames = () => {
     onClose();
@@ -71,7 +72,7 @@ export function CartDrawer({ cart, open, onClose, onRemove }: CartDrawerProps) {
                 )}
               </strong>
             </div>
-            <button>
+            <button onClick={onCheckout}>
               Finalizar compra <ArrowRight />
             </button>
           </footer>

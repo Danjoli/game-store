@@ -15,6 +15,9 @@ The responsive storefront interface is available with:
 - Category filters
 - Game search
 - Interactive shopping cart
+- Customer registration, login and profile
+- Persistent customer order history
+- Checkout with simulated PIX or credit-card payment
 - Responsive desktop and mobile navigation
 - Project architecture showcase
 
@@ -35,7 +38,7 @@ Password: password
 ```
 
 These credentials are intended for local development only. The panel includes
-dashboard metrics and complete game and category management.
+dashboard metrics and complete game, category and order management.
 
 ## Stack
 
@@ -120,9 +123,8 @@ migrations.
 
 ## Roadmap
 
-- Implement checkout
-- Add order and payment management
 - Expand automated end-to-end coverage
+- Integrate a production payment provider
 
 ## Development workflow
 

@@ -5,6 +5,7 @@ import type {
   AdminUser,
   DashboardStats,
   GamePayload,
+  AdminOrder,
 } from "./types";
 
 const api = axios.create({
@@ -90,4 +91,10 @@ export async function updateGame(
 }
 export async function deleteGame(token: string, id: number) {
   await api.delete(`/api/admin/games/${id}`, auth(token));
+}
+export async function getAdminOrders(token: string) {
+  return (await api.get<{ data: AdminOrder[] }>("/api/admin/orders", auth(token))).data.data;
+}
+export async function updateOrderStatus(token: string, id: number, status: AdminOrder["status"]) {
+  return (await api.patch<{ data: AdminOrder }>(`/api/admin/orders/${id}/status`, { status }, auth(token))).data.data;
 }

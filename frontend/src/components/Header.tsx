@@ -1,8 +1,8 @@
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { Brand } from "./Brand";
 
-type HeaderProps = { cartCount: number; onOpenCart: () => void };
+type HeaderProps = { cartCount: number; customerName?: string; onOpenCart: () => void; onOpenAccount: () => void };
 const links = [
   { label: "Início", href: "#inicio" },
   { label: "Loja", href: "#catalogo" },
@@ -10,7 +10,7 @@ const links = [
   { label: "Tecnologia", href: "#arquitetura" },
 ];
 
-export function Header({ cartCount, onOpenCart }: HeaderProps) {
+export function Header({ cartCount, customerName, onOpenCart, onOpenAccount }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header className="header">
@@ -27,6 +27,7 @@ export function Header({ cartCount, onOpenCart }: HeaderProps) {
         ))}
       </nav>
       <div className="header-actions">
+        <button className="profile-button" onClick={onOpenAccount} aria-label="Abrir minha conta"><UserRound /><span>{customerName ?? "Entrar"}</span></button>
         <button
           className="menu-button"
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}

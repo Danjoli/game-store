@@ -116,10 +116,27 @@ GET    /api/admin/games
 POST   /api/admin/games
 PUT    /api/admin/games/{game}
 DELETE /api/admin/games/{game}
+GET    /api/admin/orders
+PATCH  /api/admin/orders/{order}/status
 ```
 
 The dashboard reports totals for games, categories, users and carts. Category
 deletion is blocked while games are associated with it.
+
+## Checkout and orders
+
+Authenticated customers can convert their persistent cart into an immutable
+order snapshot. Payment is currently simulated and accepts `pix` or
+`credit_card`.
+
+```text
+GET  /api/orders
+GET  /api/orders/{order}
+POST /api/orders
+```
+
+The checkout stores delivery details, copies the current title and price of
+every game to the order and clears the cart in the same database transaction.
 
 Example response:
 

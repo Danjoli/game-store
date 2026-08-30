@@ -10,6 +10,14 @@ export type DashboardStats = {
   categories: number;
   activeCarts: number;
   cartItems: number;
+  orders: number;
+  revenue: number;
+};
+
+export type AdminOrder = {
+  id: number; status: "paid" | "processing" | "completed" | "cancelled";
+  total: number; paymentMethod: string; recipientName: string; createdAt: string;
+  customer: AdminUser; items: { id: number; title: string; quantity: number; subtotal: number }[];
 };
 export type AdminCategory = {
   id: number;

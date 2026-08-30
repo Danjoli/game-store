@@ -5,6 +5,8 @@
   --admin-line: #ffffff1c;
   --admin-muted: #8e9793;
 }
+
+.orders-admin-list{display:grid;gap:16px}.admin-order-card{background:#151a24;border:1px solid #2c3443;border-radius:13px;overflow:hidden}.admin-order-card>header,.admin-order-card>footer{display:flex;align-items:center;justify-content:space-between;padding:18px 20px}.admin-order-card h3{margin:4px 0}.admin-order-card header span,.admin-order-card time{color:#929cad;font-size:13px}.admin-order-card header>strong{color:#8dfc46;font-size:22px}.admin-order-items{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px;border-block:1px solid #293140}.admin-order-items span{background:#222938;padding:7px 10px;border-radius:7px}.admin-order-card select{background:#0b0e14;color:white;border:1px solid #3d475a;border-radius:7px;padding:9px}.admin-empty{padding:40px;text-align:center;color:#929cad}
 .admin-loading,
 .admin-login {
   min-height: 100vh;
