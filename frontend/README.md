@@ -11,8 +11,9 @@ Responsive storefront built with React, TypeScript and Vite.
 - Responsive navigation
 - Desktop, tablet and mobile layouts
 
-The game data is currently stored locally in `src/App.tsx`. It will be replaced
-by data from the Laravel REST API as the backend evolves.
+Without API configuration, the app uses local demonstration data. To connect the
+Laravel API, copy `.env.example` to `.env` and configure `VITE_API_URL`. The
+frontend expects the games endpoint at `/api/games`.
 
 ## Requirements
 
@@ -44,10 +45,16 @@ npm run preview  # Preview the production build locally
 
 ```text
 src/
-├── App.tsx    # Components, catalog data and interactions
-├── App.css    # Storefront and responsive styles
-├── index.css  # Global styles
-└── main.tsx   # React entry point
+├── components/ # Storefront interface components
+├── data/       # Local fallback data
+├── hooks/      # Reusable application state
+├── services/   # Laravel API access
+├── types/      # TypeScript domain types
+├── utils/      # Shared formatters
+├── App.tsx     # Application composition and cart state
+├── App.css     # Storefront and responsive styles
+├── index.css   # Global styles
+└── main.tsx    # React entry point
 ```
 
 Static assets are stored in `public/`.

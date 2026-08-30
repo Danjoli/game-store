@@ -618,6 +618,47 @@ button {
   margin: 0;
   font-size: 12px;
 }
+.catalog-state {
+  border: 1px solid var(--line);
+  color: #7f8984;
+  min-height: 220px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.catalog-state p {
+  margin: 0;
+  max-width: 430px;
+  font-size: 12px;
+}
+.catalog-state h3 {
+  color: #fff;
+  margin: 0;
+}
+.catalog-state button {
+  background: var(--lime);
+  color: #080a09;
+  cursor: pointer;
+  padding: 10px 16px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.loader {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #ffffff26;
+  border-top-color: var(--lime);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .stack {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
