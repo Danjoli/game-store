@@ -41,7 +41,27 @@ class GameTest extends TestCase
         $this->assertDatabaseCount('games', 6);
         $this->assertDatabaseHas('games', [
             'title' => 'Neon Horizon',
+            'slug' => 'neon-horizon',
             'featured' => true,
         ]);
+    }
+
+    public function test_update_or_create_generates_a_slug_for_a_new_game(): void
+    {
+        $category = Category::factory()->create();
+
+        $game = Game::query()->updateOrCreate(
+            ['title' => 'Final Sector'],
+            [
+                'category_id' => $category->id,
+                'studio' => 'Iron Fox',
+                'description' => 'Action game.',
+                'price' => 59.90,
+                'rating' => 4.5,
+                'art' => 'sector',
+            ],
+        );
+
+        $this->assertSame('final-sector', $game->slug);
     }
 }

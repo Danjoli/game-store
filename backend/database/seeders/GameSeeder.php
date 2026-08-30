@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Game;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class GameSeeder extends Seeder
 {
@@ -25,7 +26,11 @@ class GameSeeder extends Seeder
 
             Game::query()->updateOrCreate(
                 ['title' => $data['title']],
-                [...$data, 'category_id' => Category::query()->where('slug', $categorySlug)->sole()->id],
+                [
+                    ...$data,
+                    'slug' => Str::slug($data['title']),
+                    'category_id' => Category::query()->where('slug', $categorySlug)->sole()->id,
+                ],
             );
         }
     }

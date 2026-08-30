@@ -51,7 +51,10 @@ class Game extends Model
     protected static function booted(): void
     {
         static::saving(function (Game $game): void {
-            if ($game->isDirty('title') && ! $game->isDirty('slug')) {
+            if (
+                blank($game->slug)
+                || ($game->isDirty('title') && ! $game->isDirty('slug'))
+            ) {
                 $game->slug = Str::slug($game->title);
             }
         });
