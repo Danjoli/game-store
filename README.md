@@ -1,6 +1,25 @@
 # 🎮 Game Store
 
-Full-stack game e-commerce built with a completely decoupled architecture.
+Full-stack game e-commerce project built with a decoupled architecture. The
+frontend and backend are independent applications that communicate through a
+REST API using HTTP and JSON.
+
+## Current status
+
+🚧 In development.
+
+The responsive storefront interface is available with:
+
+- Gamer-inspired landing page
+- Featured game catalog
+- Category filters
+- Game search
+- Interactive shopping cart
+- Responsive desktop and mobile navigation
+- Project architecture showcase
+
+The catalog currently uses local sample data while the Laravel REST API is
+being developed.
 
 ## Stack
 
@@ -14,11 +33,12 @@ Full-stack game e-commerce built with a completely decoupled architecture.
 
 ### Frontend
 
-- React
+- React 19
 - TypeScript
 - React Compiler
 - Vite
-- Tailwind CSS
+- Lucide React
+- CSS
 
 ## Architecture
 
@@ -30,38 +50,74 @@ React + TypeScript
       Laravel
         ↓
     PostgreSQL
+```
 
-The frontend and backend are independent applications and communicate exclusively through HTTP/JSON.
+## Project structure
 
-Project structure
+```text
 game-store/
-├── backend/
-└── frontend/
-Status
+├── backend/   # Laravel API
+└── frontend/  # React application
+```
 
-🚧 In development.
+## Running the frontend
 
-Goals
-RESTful API with Laravel
-PostgreSQL persistence
-Game catalog
-Categories and filters
-Search
-Shopping cart
-Authentication
-Checkout
-Automated tests
-Responsive gamer-inspired interface
+Requirements:
+
+- Node.js 20 or newer
+- npm
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Frontend checks
+
+```bash
+npm run lint
+npm run build
+```
+
+## Running the backend
+
+Requirements:
+
+- PHP 8.2 or newer
+- Composer
+- PostgreSQL
+
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
+
+Configure the PostgreSQL connection in `backend/.env` before running the
+migrations.
+
+## Roadmap
+
+- Complete the Laravel REST API
+- Persist games and categories in PostgreSQL
+- Connect the React catalog to the API
+- Add authentication
+- Persist the shopping cart
+- Implement checkout
+- Add automated tests
 
 ## Development workflow
 
-This project uses a GitHub-based development workflow:
-
-1. Create an Issue
-2. Move it to In Progress
-3. Create a dedicated branch
-4. Implement and test the changes
-5. Open a Pull Request
-6. Review the changes
-7. Merge into `main`
-8. Move the Issue to Done
+1. Create an issue.
+2. Move it to **In Progress**.
+3. Create a dedicated branch.
+4. Implement and test the changes.
+5. Open a pull request.
+6. Review and merge into `main`.
+7. Move the issue to **Done**.
