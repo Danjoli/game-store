@@ -12,6 +12,7 @@ export function GameCard({ game, added, onAdd }: GameCardProps) {
   return (
     <article className="game-card">
       <div className={`game-art ${game.art}`}>
+        <img className="game-cover" src={game.image} alt="" />
         {game.label && <span className="label">{game.label}</span>}
         <button
           className={`quick ${added ? "added" : ""}`}

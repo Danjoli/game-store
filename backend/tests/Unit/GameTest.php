@@ -64,4 +64,30 @@ class GameTest extends TestCase
 
         $this->assertSame('final-sector', $game->slug);
     }
+
+    public function test_factory_states_create_featured_and_discounted_games(): void
+    {
+        $featured = Game::factory()->featured()->create();
+        $discounted = Game::factory()->discounted()->create();
+
+        $this->assertTrue($featured->featured);
+        $this->assertSame('DESTAQUE', $featured->label);
+        $this->assertSame('99.90', $discounted->price);
+        $this->assertSame('199.80', $discounted->old_price);
+        $this->assertSame('-50%', $discounted->label);
+    }
+
+    public function test_every_seeded_game_has_a_cover_in_the_frontend(): void
+    {
+        $this->seed(CategorySeeder::class);
+        $this->seed(GameSeeder::class);
+
+        Game::query()->each(function (Game $game): void {
+            $this->assertNotNull($game->cover_image);
+            $this->assertFileExists(
+                base_path('../frontend/public'.$game->cover_image),
+                "Missing cover for {$game->title}",
+            );
+        });
+    }
 }

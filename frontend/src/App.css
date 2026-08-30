@@ -445,6 +445,18 @@ button {
   position: relative;
   overflow: hidden;
 }
+.game-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  transition: transform 0.45s ease;
+}
+.game-card:hover .game-cover {
+  transform: scale(1.04);
+}
 .game-art:before,
 .game-art:after {
   content: "";
@@ -807,6 +819,8 @@ button {
 .mini-art {
   width: 55px;
   height: 66px;
+  background-position: center;
+  background-size: cover;
 }
 .cart-item > div:nth-child(2) {
   flex-direction: column;

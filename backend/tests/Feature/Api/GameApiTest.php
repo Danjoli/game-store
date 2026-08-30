@@ -37,7 +37,7 @@ class GameApiTest extends TestCase
                     '*' => [
                         'id', 'title', 'slug', 'first', 'second', 'studio',
                         'description', 'category', 'categorySlug', 'rating',
-                        'price', 'oldPrice', 'label', 'art', 'featured',
+                        'price', 'oldPrice', 'label', 'art', 'image', 'featured',
                     ],
                 ],
             ]);

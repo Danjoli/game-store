@@ -43,7 +43,10 @@ export function CartDrawer({ cart, open, onClose, onRemove }: CartDrawerProps) {
           ) : (
             cart.map((game) => (
               <div className="cart-item" key={game.id}>
-                <div className={`mini-art ${game.art}`} />
+                <div
+                  className={`mini-art ${game.art}`}
+                  style={{ backgroundImage: `url(${game.image})` }}
+                />
                 <div>
                   <strong>{game.title}</strong>
                   <span>{formatCurrency(game.price)}</span>

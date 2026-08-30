@@ -29,6 +29,7 @@ class GameResource extends JsonResource
             'oldPrice' => $this->old_price === null ? null : (float) $this->old_price,
             'label' => $this->label,
             'art' => $this->art,
+            'image' => $this->cover_image,
             'featured' => $this->featured,
         ];
     }

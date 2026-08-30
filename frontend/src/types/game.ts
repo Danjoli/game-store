@@ -10,4 +10,5 @@ export type Game = {
   oldPrice?: number;
   label?: string;
   art: string;
+  image: string;
 };

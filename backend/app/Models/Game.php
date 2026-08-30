@@ -24,6 +24,7 @@ class Game extends Model
         'rating',
         'label',
         'art',
+        'cover_image',
         'featured',
     ];
 

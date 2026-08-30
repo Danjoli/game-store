@@ -13,6 +13,7 @@ export const fallbackGames: Game[] = [
     oldPrice: 249.9,
     label: "-40%",
     art: "neon",
+    image: "/covers/neon-horizon.png",
   },
   {
     id: 2,
@@ -25,6 +26,7 @@ export const fallbackGames: Game[] = [
     price: 189.9,
     label: "NOVO",
     art: "ashen",
+    image: "/covers/ashen-crown.png",
   },
   {
     id: 3,
@@ -38,6 +40,7 @@ export const fallbackGames: Game[] = [
     oldPrice: 199.9,
     label: "-50%",
     art: "velocity",
+    image: "/covers/velocity-zero.png",
   },
   {
     id: 4,
@@ -49,6 +52,7 @@ export const fallbackGames: Game[] = [
     rating: 4.6,
     price: 79.9,
     art: "shadow",
+    image: "/covers/shadow-protocol.png",
   },
   {
     id: 5,
@@ -61,6 +65,7 @@ export const fallbackGames: Game[] = [
     price: 129.9,
     label: "DESTAQUE",
     art: "orbit",
+    image: "/covers/wild-orbit.png",
   },
   {
     id: 6,
@@ -74,6 +79,7 @@ export const fallbackGames: Game[] = [
     oldPrice: 119.9,
     label: "-50%",
     art: "sector",
+    image: "/covers/final-sector.png",
   },
 ];
 

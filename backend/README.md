@@ -27,6 +27,7 @@ The category domain includes:
 - Eloquent model with automatic slug generation
 - Unique names and slugs
 - Factory and idempotent seeder
+- Six complete demonstration games with original cover art
 - JSON resource
 - Public read endpoints
 
