@@ -37,6 +37,24 @@ GET /api/categories
 GET /api/categories/{slug}
 ```
 
+## Games
+
+The games endpoint returns the camelCase contract consumed by the React
+frontend, including category, prices, rating and cover style.
+
+```text
+GET /api/games
+GET /api/games/{slug}
+```
+
+Optional catalog filters:
+
+```text
+GET /api/games?search=neon
+GET /api/games?category=acao
+GET /api/games?search=neon&category=acao
+```
+
 Example response:
 
 ```json
