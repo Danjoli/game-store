@@ -56,6 +56,43 @@ GET /api/games?category=acao
 GET /api/games?search=neon&category=acao
 ```
 
+## Authentication
+
+Authentication uses Laravel Sanctum bearer tokens.
+
+```text
+POST /api/register
+POST /api/login
+GET  /api/me
+POST /api/logout
+```
+
+Registration requires `name`, `email`, `password` and
+`password_confirmation`. Protected routes receive the token as
+`Authorization: Bearer <token>`.
+
+## Cart
+
+Each authenticated user has one persistent cart. A game can appear only once
+in the cart and supports quantities from 1 to 99.
+
+```text
+GET    /api/cart
+POST   /api/cart/items
+PUT    /api/cart/items/{game_id}
+DELETE /api/cart/items/{game_id}
+DELETE /api/cart
+```
+
+Add an item:
+
+```json
+{
+  "game_id": 1,
+  "quantity": 1
+}
+```
+
 Example response:
 
 ```json

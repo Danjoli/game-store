@@ -18,8 +18,8 @@ The responsive storefront interface is available with:
 - Responsive desktop and mobile navigation
 - Project architecture showcase
 
-The catalog currently uses local sample data while the Laravel REST API is
-being developed.
+The catalog is served by the Laravel REST API. The backend also provides
+Sanctum token authentication and persistent carts for authenticated users.
 
 ## Stack
 
@@ -107,8 +107,8 @@ migrations.
 - Complete the Laravel REST API
 - Persist games and categories in PostgreSQL
 - Connect the React catalog to the API
-- Add authentication
-- Persist the shopping cart
+- Connect the authentication interface
+- Connect the persistent cart interface
 - Implement checkout
 - Add automated tests
 

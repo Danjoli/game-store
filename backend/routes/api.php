@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\GameController;
 use Illuminate\Support\Facades\Route;
@@ -8,3 +10,17 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category:slug}', [CategoryController::class, 'show']);
 Route::get('/games', [GameController::class, 'index']);
 Route::get('/games/{game:slug}', [GameController::class, 'show']);
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/cart', [CartController::class, 'show']);
+    Route::post('/cart/items', [CartController::class, 'storeItem']);
+    Route::put('/cart/items/{game}', [CartController::class, 'updateItem']);
+    Route::delete('/cart/items/{game}', [CartController::class, 'destroyItem']);
+    Route::delete('/cart', [CartController::class, 'clear']);
+});
