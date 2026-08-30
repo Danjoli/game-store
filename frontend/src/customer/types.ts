@@ -14,3 +14,5 @@ export type CheckoutPayload = {
   payment_method: "pix" | "credit_card"; recipient_name: string; postal_code: string;
   address: string; city: string; state: string;
 };
+export type Address = { id: number; label: string; recipientName: string; postalCode: string; address: string; city: string; state: string; isDefault: boolean };
+export type AddressPayload = { label: string; recipient_name: string; postal_code: string; address: string; city: string; state: string; is_default?: boolean };

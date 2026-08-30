@@ -1,16 +1,17 @@
 import { ArrowRight, ShoppingBag, Trash2, X } from "lucide-react";
-import type { Game } from "../types/game";
+import type { CartItem } from "../customer/types";
 import { formatCurrency } from "../utils/currency";
 
 type CartDrawerProps = {
-  cart: Game[];
+  cart: CartItem[];
   open: boolean;
   onClose: () => void;
   onRemove: (id: number) => void;
   onCheckout: () => void;
+  onQuantity: (gameId: number, quantity: number) => void;
 };
 
-export function CartDrawer({ cart, open, onClose, onRemove, onCheckout }: CartDrawerProps) {
+export function CartDrawer({ cart, open, onClose, onRemove, onCheckout, onQuantity }: CartDrawerProps) {
   if (!open) return null;
   const exploreGames = () => {
     onClose();
@@ -42,19 +43,20 @@ export function CartDrawer({ cart, open, onClose, onRemove, onCheckout }: CartDr
               <button onClick={exploreGames}>Explorar jogos</button>
             </div>
           ) : (
-            cart.map((game) => (
-              <div className="cart-item" key={game.id}>
+            cart.map((item) => (
+              <div className="cart-item" key={item.game.id}>
                 <div
-                  className={`mini-art ${game.art}`}
-                  style={{ backgroundImage: `url(${game.image})` }}
+                  className={`mini-art ${item.game.art}`}
+                  style={{ backgroundImage: `url(${item.game.image})` }}
                 />
                 <div>
-                  <strong>{game.title}</strong>
-                  <span>{formatCurrency(game.price)}</span>
+                  <strong>{item.game.title}</strong>
+                  <span>{formatCurrency(item.subtotal)}</span>
+                  <div className="cart-quantity"><button onClick={() => onQuantity(item.game.id, item.quantity - 1)} disabled={item.quantity <= 1}>−</button><b>{item.quantity}</b><button onClick={() => onQuantity(item.game.id, item.quantity + 1)} disabled={item.quantity >= 99}>+</button></div>
                 </div>
                 <button
-                  aria-label={`Remover ${game.title}`}
-                  onClick={() => onRemove(game.id)}
+                  aria-label={`Remover ${item.game.title}`}
+                  onClick={() => onRemove(item.game.id)}
                 >
                   <Trash2 />
                 </button>
@@ -68,7 +70,7 @@ export function CartDrawer({ cart, open, onClose, onRemove, onCheckout }: CartDr
               <span>Total</span>
               <strong>
                 {formatCurrency(
-                  cart.reduce((total, item) => total + item.price, 0),
+                  cart.reduce((total, item) => total + item.subtotal, 0),
                 )}
               </strong>
             </div>

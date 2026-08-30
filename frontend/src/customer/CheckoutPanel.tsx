@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { CheckCircle2, CreditCard, X } from "lucide-react";
 import { formatCurrency } from "../utils/currency";
-import type { CheckoutPayload } from "./types";
+import type { Address, CheckoutPayload } from "./types";
 
-type Props = { open: boolean; total: number; onClose: () => void; onSubmit: (payload: CheckoutPayload) => Promise<void> };
-export function CheckoutPanel({ open, total, onClose, onSubmit }: Props) {
+type Props = { open: boolean; total: number; addresses: Address[]; onClose: () => void; onSubmit: (payload: CheckoutPayload) => Promise<void> };
+export function CheckoutPanel({ open, total, addresses, onClose, onSubmit }: Props) {
   const [form, setForm] = useState<CheckoutPayload>({ payment_method: "pix", recipient_name: "", postal_code: "", address: "", city: "", state: "" });
   const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [done, setDone] = useState(false);
   if (!open) return null;
@@ -14,6 +14,7 @@ export function CheckoutPanel({ open, total, onClose, onSubmit }: Props) {
     <header><div><small>CHECKOUT SEGURO</small><h2>Finalizar compra</h2></div><button onClick={onClose} aria-label="Fechar"><X /></button></header>
     {done ? <div className="checkout-success"><CheckCircle2 /><h3>Compra concluída!</h3><p>Seu pagamento foi aprovado e o pedido já aparece no seu perfil.</p><button className="account-primary" onClick={() => { setDone(false); onClose(); }}>Continuar</button></div> : <form className="account-form" onSubmit={submit}>
       <div className="checkout-total"><span>Total do pedido</span><strong>{formatCurrency(total)}</strong></div>
+      {addresses.length > 0 && <label>Usar endereço salvo<select defaultValue="" onChange={(event) => { const saved = addresses.find((address) => address.id === Number(event.target.value)); if (saved) setForm((current) => ({ ...current, recipient_name: saved.recipientName, postal_code: saved.postalCode, address: saved.address, city: saved.city, state: saved.state })); }}><option value="">Preencher manualmente</option>{addresses.map((address) => <option key={address.id} value={address.id}>{address.label} — {address.address}</option>)}</select></label>}
       <label>Nome do destinatário<input value={form.recipient_name} onChange={(e) => field("recipient_name", e.target.value)} required /></label>
       <div className="form-pair"><label>CEP<input value={form.postal_code} onChange={(e) => field("postal_code", e.target.value)} required /></label><label>UF<input value={form.state} maxLength={2} onChange={(e) => field("state", e.target.value.toUpperCase())} required /></label></div>
       <label>Endereço completo<input value={form.address} onChange={(e) => field("address", e.target.value)} required /></label>

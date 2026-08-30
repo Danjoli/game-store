@@ -65,11 +65,31 @@ POST /api/register
 POST /api/login
 GET  /api/me
 POST /api/logout
+POST /api/forgot-password
+POST /api/reset-password
+PUT  /api/profile
+PUT  /api/profile/password
 ```
 
 Registration requires `name`, `email`, `password` and
 `password_confirmation`. Protected routes receive the token as
 `Authorization: Bearer <token>`.
+
+Password recovery links point to `FRONTEND_URL`. Configure a production mail
+driver before deployment; local environments use Laravel's configured mail
+driver.
+
+## Customer addresses
+
+Authenticated customers can save multiple checkout addresses. The first
+address becomes the default automatically.
+
+```text
+GET    /api/addresses
+POST   /api/addresses
+PUT    /api/addresses/{address}
+DELETE /api/addresses/{address}
+```
 
 ## Cart
 

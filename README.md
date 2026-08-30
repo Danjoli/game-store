@@ -16,6 +16,9 @@ The responsive storefront interface is available with:
 - Game search
 - Interactive shopping cart
 - Customer registration, login and profile
+- Profile editing, password change and password recovery
+- Multiple saved delivery addresses
+- Cart quantities from 1 to 99
 - Persistent customer order history
 - Checkout with simulated PIX or credit-card payment
 - Responsive desktop and mobile navigation
@@ -125,6 +128,7 @@ migrations.
 
 - Expand automated end-to-end coverage
 - Integrate a production payment provider
+- Configure a transactional e-mail provider
 
 ## Development workflow
 
