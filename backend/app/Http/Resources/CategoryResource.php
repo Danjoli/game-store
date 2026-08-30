@@ -16,6 +16,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
+            'gamesCount' => $this->whenCounted('games'),
         ];
     }
 }

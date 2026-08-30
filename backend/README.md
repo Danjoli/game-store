@@ -93,6 +93,34 @@ Add an item:
 }
 ```
 
+## Administration
+
+Administrative endpoints require a Sanctum bearer token from a user whose
+`is_admin` field is enabled. The database seeder creates the following local
+development administrator:
+
+```text
+Email: test@example.com
+Password: password
+```
+
+Available endpoints:
+
+```text
+GET    /api/admin/dashboard
+GET    /api/admin/categories
+POST   /api/admin/categories
+PUT    /api/admin/categories/{category}
+DELETE /api/admin/categories/{category}
+GET    /api/admin/games
+POST   /api/admin/games
+PUT    /api/admin/games/{game}
+DELETE /api/admin/games/{game}
+```
+
+The dashboard reports totals for games, categories, users and carts. Category
+deletion is blocked while games are associated with it.
+
 Example response:
 
 ```json

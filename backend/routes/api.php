@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\Admin\GameController as AdminGameController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -23,4 +26,10 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::put('/cart/items/{game}', [CartController::class, 'updateItem']);
     Route::delete('/cart/items/{game}', [CartController::class, 'destroyItem']);
     Route::delete('/cart', [CartController::class, 'clear']);
+
+    Route::prefix('admin')->middleware('admin')->group(function (): void {
+        Route::get('/dashboard', DashboardController::class);
+        Route::apiResource('categories', AdminCategoryController::class)->except('show');
+        Route::apiResource('games', AdminGameController::class)->except('show');
+    });
 });

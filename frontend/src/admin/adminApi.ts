@@ -1,0 +1,93 @@
+import axios from "axios";
+import type {
+  AdminCategory,
+  AdminGame,
+  AdminUser,
+  DashboardStats,
+  GamePayload,
+} from "./types";
+
+const api = axios.create({
+  baseURL:
+    import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? "http://localhost:8000",
+});
+const auth = (token: string) => ({
+  headers: { Authorization: `Bearer ${token}` },
+});
+
+export async function login(email: string, password: string) {
+  const { data } = await api.post<{ user: AdminUser; token: string }>(
+    "/api/login",
+    { email, password, device_name: "admin-panel" },
+  );
+  return data;
+}
+export async function getMe(token: string) {
+  return (await api.get<{ data: AdminUser }>("/api/me", auth(token))).data.data;
+}
+export async function logout(token: string) {
+  await api.post("/api/logout", {}, auth(token));
+}
+export async function getDashboard(token: string) {
+  return (
+    await api.get<{ data: DashboardStats }>("/api/admin/dashboard", auth(token))
+  ).data.data;
+}
+export async function getAdminCategories(token: string) {
+  return (
+    await api.get<{ data: AdminCategory[] }>(
+      "/api/admin/categories",
+      auth(token),
+    )
+  ).data.data;
+}
+export async function createCategory(token: string, name: string) {
+  return (
+    await api.post<{ data: AdminCategory }>(
+      "/api/admin/categories",
+      { name },
+      auth(token),
+    )
+  ).data.data;
+}
+export async function updateCategory(token: string, id: number, name: string) {
+  return (
+    await api.put<{ data: AdminCategory }>(
+      `/api/admin/categories/${id}`,
+      { name },
+      auth(token),
+    )
+  ).data.data;
+}
+export async function deleteCategory(token: string, id: number) {
+  await api.delete(`/api/admin/categories/${id}`, auth(token));
+}
+export async function getAdminGames(token: string) {
+  return (await api.get<{ data: AdminGame[] }>("/api/admin/games", auth(token)))
+    .data.data;
+}
+export async function createGame(token: string, payload: GamePayload) {
+  return (
+    await api.post<{ data: AdminGame }>(
+      "/api/admin/games",
+      payload,
+      auth(token),
+    )
+  ).data.data;
+}
+export async function updateGame(
+  token: string,
+  id: number,
+  payload: GamePayload,
+) {
+  return (
+    await api.put<{ data: AdminGame }>(
+      `/api/admin/games/${id}`,
+      payload,
+      auth(token),
+    )
+  ).data.data;
+}
+export async function deleteGame(token: string, id: number) {
+  await api.delete(`/api/admin/games/${id}`, auth(token));
+}

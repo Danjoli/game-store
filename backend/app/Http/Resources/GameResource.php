@@ -23,6 +23,7 @@ class GameResource extends JsonResource
             'studio' => $this->studio,
             'description' => $this->description,
             'category' => $this->category->name,
+            'categoryId' => $this->category->id,
             'categorySlug' => $this->category->slug,
             'rating' => (float) $this->rating,
             'price' => (float) $this->price,

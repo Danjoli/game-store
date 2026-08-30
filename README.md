@@ -19,7 +19,23 @@ The responsive storefront interface is available with:
 - Project architecture showcase
 
 The catalog is served by the Laravel REST API. The backend also provides
-Sanctum token authentication and persistent carts for authenticated users.
+Sanctum token authentication, persistent carts for authenticated users and an
+administrative panel for managing the catalog.
+
+## Administrative panel
+
+With both applications running, open
+[http://localhost:5173/admin](http://localhost:5173/admin).
+
+Local development credentials created by the database seeder:
+
+```text
+Email: test@example.com
+Password: password
+```
+
+These credentials are intended for local development only. The panel includes
+dashboard metrics and complete game and category management.
 
 ## Stack
 
@@ -95,7 +111,7 @@ cd backend
 composer install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate
+php artisan migrate --seed
 php artisan serve
 ```
 
@@ -104,13 +120,9 @@ migrations.
 
 ## Roadmap
 
-- Complete the Laravel REST API
-- Persist games and categories in PostgreSQL
-- Connect the React catalog to the API
-- Connect the authentication interface
-- Connect the persistent cart interface
 - Implement checkout
-- Add automated tests
+- Add order and payment management
+- Expand automated end-to-end coverage
 
 ## Development workflow
 
