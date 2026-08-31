@@ -15,6 +15,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'isAdmin' => $this->is_admin,
+            'isActive' => $this->is_active,
+            'ordersCount' => $this->whenCounted('orders'),
         ];
     }
 }

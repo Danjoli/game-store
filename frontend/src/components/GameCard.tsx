@@ -16,7 +16,8 @@ export function GameCard({ game, added, onAdd }: GameCardProps) {
         {game.label && <span className="label">{game.label}</span>}
         <button
           className={`quick ${added ? "added" : ""}`}
-          aria-label={`Adicionar ${game.title} ao carrinho`}
+          aria-label={game.available === false ? `${game.title} indisponível` : `Adicionar ${game.title} ao carrinho`}
+          disabled={game.available === false}
           onClick={() => onAdd(game)}
         >
           <ShoppingBag />
@@ -36,6 +37,7 @@ export function GameCard({ game, added, onAdd }: GameCardProps) {
         </div>
         <h3>{game.title}</h3>
         <p>{game.studio}</p>
+        {game.available === false && <span className="out-of-stock">Indisponível</span>}
         <footer>
           {game.oldPrice && <del>{formatCurrency(game.oldPrice)}</del>}
           <strong>{formatCurrency(game.price)}</strong>

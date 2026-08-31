@@ -22,6 +22,17 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    'payment' => [
+        'driver' => env('PAYMENT_DRIVER', 'fake'),
+        'access_token' => env('MERCADO_PAGO_ACCESS_TOKEN'),
+        'webhook_secret' => env('MERCADO_PAGO_WEBHOOK_SECRET'),
+        'notification_url' => env('MERCADO_PAGO_NOTIFICATION_URL'),
+    ],
+
+    'analytics' => [
+        'frontend_id' => env('VITE_ANALYTICS_ID'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

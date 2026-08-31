@@ -21,6 +21,7 @@ class CheckoutRequest extends FormRequest
             'address' => ['required', 'string', 'max:180'],
             'city' => ['required', 'string', 'max:100'],
             'state' => ['required', 'string', 'size:2'],
+            'coupon_code' => ['nullable', 'string', 'max:40'],
         ];
     }
 }

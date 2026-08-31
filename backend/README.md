@@ -138,6 +138,14 @@ PUT    /api/admin/games/{game}
 DELETE /api/admin/games/{game}
 GET    /api/admin/orders
 PATCH  /api/admin/orders/{order}/status
+POST   /api/admin/orders/{order}/refund
+GET    /api/admin/users
+PATCH  /api/admin/users/{user}
+GET    /api/admin/coupons
+POST   /api/admin/coupons
+PUT    /api/admin/coupons/{coupon}
+DELETE /api/admin/coupons/{coupon}
+POST   /api/admin/uploads/covers
 ```
 
 The dashboard reports totals for games, categories, users and carts. Category
@@ -157,6 +165,15 @@ POST /api/orders
 
 The checkout stores delivery details, copies the current title and price of
 every game to the order and clears the cart in the same database transaction.
+
+Production payments use the configurable Mercado Pago gateway. Orders begin
+as pending, webhooks are authenticated, payment state is fetched directly
+from the provider and refunds are idempotent. The default `fake` driver keeps
+local development and automated tests independent of external credentials.
+
+Games support optional stock and authorized download URLs. Coupons support
+fixed or percentage discounts, validity periods, minimum totals and usage
+limits.
 
 Example response:
 
@@ -184,3 +201,6 @@ PostgreSQL database.
 ```bash
 vendor/bin/pint
 ```
+
+See the root `DEPLOYMENT.md` for every production variable, Docker/CI setup,
+queue workers, Mercado Pago webhook configuration and operational checklist.

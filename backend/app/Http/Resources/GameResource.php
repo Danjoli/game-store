@@ -32,6 +32,10 @@ class GameResource extends JsonResource
             'art' => $this->art,
             'image' => $this->cover_image,
             'featured' => $this->featured,
+            'stock' => $this->stock,
+            'available' => $this->active && ($this->stock === null || $this->stock > 0),
+            'active' => $this->active,
+            'downloadUrl' => $this->when($request->user()?->is_admin || $request->user()?->orders()->where('status', 'completed')->whereHas('items', fn ($query) => $query->where('game_id', $this->id))->exists(), $this->download_url),
         ];
     }
 }

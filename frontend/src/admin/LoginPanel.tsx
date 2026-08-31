@@ -4,8 +4,8 @@ import { Gamepad2, LockKeyhole } from "lucide-react";
 import { login } from "./adminApi";
 
 export function LoginPanel({ onLogin }: { onLogin: (token: string) => void }) {
-  const [email, setEmail] = useState("test@example.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const submit = async (event: FormEvent) => {

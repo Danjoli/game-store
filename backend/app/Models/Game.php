@@ -26,6 +26,7 @@ class Game extends Model
         'art',
         'cover_image',
         'featured',
+        'stock', 'download_url', 'active',
     ];
 
     /**
@@ -46,6 +47,8 @@ class Game extends Model
             'old_price' => 'decimal:2',
             'rating' => 'decimal:1',
             'featured' => 'boolean',
+            'stock' => 'integer',
+            'active' => 'boolean',
         ];
     }
 

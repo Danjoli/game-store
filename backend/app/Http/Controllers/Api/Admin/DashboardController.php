@@ -23,7 +23,7 @@ class DashboardController extends Controller
                 'activeCarts' => Cart::query()->whereHas('items')->count(),
                 'cartItems' => CartItem::query()->sum('quantity'),
                 'orders' => Order::query()->count(),
-                'revenue' => (float) Order::query()->whereNot('status', 'cancelled')->sum('total'),
+                'revenue' => (float) Order::query()->whereNotIn('status', ['cancelled', 'refunded', 'pending'])->sum('total'),
             ],
         ]);
     }

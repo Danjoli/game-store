@@ -1,0 +1,7 @@
+import { Link } from "react-router-dom";
+import { Brand } from "../components/Brand";
+
+export function LegalPage({ type }: { type: "privacy" | "terms" }) {
+  const privacy = type === "privacy";
+  return <main className="legal-page"><article><Brand /><small>ÚLTIMA ATUALIZAÇÃO: 30/08/2026</small><h1>{privacy ? "Política de Privacidade" : "Termos de Uso"}</h1>{privacy ? <><p>A Game Store trata dados cadastrais, endereços, carrinhos e pedidos para prestar o serviço, prevenir fraudes e cumprir obrigações legais.</p><h2>Seus direitos</h2><p>Você pode solicitar acesso, correção, portabilidade ou exclusão dos dados pelos canais de atendimento informados pela loja. Dados obrigatórios podem ser mantidos pelo prazo legal.</p><h2>Segurança e terceiros</h2><p>Dados de pagamento são processados pelo provedor configurado e não armazenamos números completos de cartão.</p></> : <><p>Ao usar a Game Store, você concorda em fornecer informações corretas, proteger sua conta e respeitar as licenças dos produtos digitais adquiridos.</p><h2>Pedidos e pagamentos</h2><p>Pedidos dependem da aprovação do pagamento. Cancelamentos e reembolsos seguem o status do pedido, as regras do provedor e a legislação aplicável.</p><h2>Conteúdo digital</h2><p>Downloads são pessoais e não podem ser redistribuídos.</p></>}<p>Este texto é uma base operacional e deve ser revisado por assessoria jurídica antes da publicação comercial.</p><Link to="/">Voltar à loja</Link></article></main>;
+}

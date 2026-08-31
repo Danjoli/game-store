@@ -1,4 +1,5 @@
 import { Brand } from "./Brand";
+import { Link } from "react-router-dom";
 
 export function SiteFooter() {
   return (
@@ -9,6 +10,7 @@ export function SiteFooter() {
         PostgreSQL
       </p>
       <span>© 2026 GAME STORE</span>
+      <nav><Link to="/termos">Termos</Link><Link to="/privacidade">Privacidade</Link></nav>
     </footer>
   );
 }

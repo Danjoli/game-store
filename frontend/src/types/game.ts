@@ -11,4 +11,6 @@ export type Game = {
   label?: string;
   art: string;
   image: string;
+  stock?: number | null;
+  available?: boolean;
 };

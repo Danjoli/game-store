@@ -19,6 +19,7 @@ class GameController extends Controller
         ]);
 
         $games = Game::query()
+            ->where('active', true)
             ->with('category')
             ->when($filters['search'] ?? null, function (Builder $query, string $search): void {
                 $query->where(function (Builder $query) use ($search): void {
@@ -36,7 +37,7 @@ class GameController extends Controller
             })
             ->orderByDesc('featured')
             ->orderBy('title')
-            ->get();
+            ->paginate(min((int) $request->input('per_page', 24), 100));
 
         return GameResource::collection($games);
     }

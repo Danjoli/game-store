@@ -7,6 +7,8 @@ import {
   ShoppingCart,
   Tags,
   Users,
+  TicketPercent,
+  UserCog,
 } from "lucide-react";
 import {
   createCategory,
@@ -22,6 +24,13 @@ import {
   updateGame,
   getAdminOrders,
   updateOrderStatus,
+  uploadCover,
+  getAdminUsers,
+  updateAdminUser,
+  getAdminCoupons,
+  createAdminCoupon,
+  deleteAdminCoupon,
+  refundOrder,
 } from "./adminApi";
 import { LoginPanel } from "./LoginPanel";
 import type {
@@ -31,10 +40,12 @@ import type {
   AdminOrder,
   DashboardStats,
   GamePayload,
+  AdminCustomer,
+  AdminCoupon,
 } from "./types";
 import "./admin.css";
 
-type Tab = "dashboard" | "games" | "categories" | "orders";
+type Tab = "dashboard" | "games" | "categories" | "orders" | "users" | "coupons";
 const emptyGame = (categoryId = 0): GamePayload => ({
   category_id: categoryId,
   title: "",
@@ -47,6 +58,9 @@ const emptyGame = (categoryId = 0): GamePayload => ({
   art: "neon",
   cover_image: "/covers/neon-horizon.png",
   featured: false,
+  stock: null,
+  download_url: null,
+  active: true,
 });
 
 export function AdminApp() {
@@ -59,6 +73,8 @@ export function AdminApp() {
   const [games, setGames] = useState<AdminGame[]>([]);
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [orders, setOrders] = useState<AdminOrder[]>([]);
+  const [customers, setCustomers] = useState<AdminCustomer[]>([]);
+  const [coupons, setCoupons] = useState<AdminCoupon[]>([]);
   const [loading, setLoading] = useState(Boolean(token));
   const [error, setError] = useState("");
 
@@ -69,17 +85,21 @@ export function AdminApp() {
       const currentUser = await getMe(accessToken);
       if (!currentUser.isAdmin)
         throw new Error("Acesso administrativo não autorizado.");
-      const [dashboard, gameList, categoryList, orderList] = await Promise.all([
+      const [dashboard, gameList, categoryList, orderList, userList, couponList] = await Promise.all([
         getDashboard(accessToken),
         getAdminGames(accessToken),
         getAdminCategories(accessToken),
         getAdminOrders(accessToken),
+        getAdminUsers(accessToken),
+        getAdminCoupons(accessToken),
       ]);
       setUser(currentUser);
       setStats(dashboard);
       setGames(gameList);
       setCategories(categoryList);
       setOrders(orderList);
+      setCustomers(userList);
+      setCoupons(couponList);
     } catch (reason) {
       localStorage.removeItem("admin_token");
       setToken("");
@@ -154,6 +174,8 @@ export function AdminApp() {
             <Tags />
             Categorias
           </button>
+          <button className={tab === "users" ? "active" : ""} onClick={() => setTab("users")}><UserCog />Clientes</button>
+          <button className={tab === "coupons" ? "active" : ""} onClick={() => setTab("coupons")}><TicketPercent />Cupons</button>
         </nav>
         <div className="admin-user">
           <span>{user?.name}</span>
@@ -173,7 +195,7 @@ export function AdminApp() {
                 ? "Visão geral"
                 : tab === "games"
                   ? "Jogos"
-                  : tab === "categories" ? "Categorias" : "Pedidos"}
+                  : tab === "categories" ? "Categorias" : tab === "orders" ? "Pedidos" : tab === "users" ? "Clientes" : "Cupons"}
             </h1>
           </div>
           <a href="/">Ver loja</a>
@@ -196,6 +218,8 @@ export function AdminApp() {
           />
         )}
         {tab === "orders" && <OrdersPanel token={token} orders={orders} onChange={refresh} />}
+        {tab === "users" && <UsersPanel token={token} customers={customers} onChange={refresh} />}
+        {tab === "coupons" && <CouponsPanel token={token} coupons={coupons} onChange={refresh} />}
       </main>
     </div>
   );
@@ -213,6 +237,7 @@ function Dashboard({ stats }: { stats: DashboardStats | null }) {
     },
     { label: "Itens em carrinhos", value: stats?.cartItems, icon: Boxes },
     { label: "Pedidos", value: stats?.orders, icon: ShoppingCart },
+    { label: "Faturamento", value: stats ? stats.revenue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : undefined, icon: TicketPercent },
   ];
   return (
     <section className="stat-grid">
@@ -334,6 +359,9 @@ function GamesPanel({
       art: game.art,
       cover_image: game.image,
       featured: game.featured,
+      stock: game.stock,
+      download_url: game.downloadUrl ?? null,
+      active: game.active,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -467,6 +495,9 @@ function GamesPanel({
               required
             />
           </label>
+          <label className="wide">Enviar nova capa<input type="file" accept="image/png,image/jpeg,image/webp,image/avif" onChange={(event) => { const image = event.target.files?.[0]; if (image) void uploadCover(token, image).then((url) => field("cover_image", url)); }} /></label>
+          <label>Estoque (vazio = ilimitado)<input type="number" min="0" value={form.stock ?? ""} onChange={(event) => field("stock", event.target.value === "" ? null : Number(event.target.value))} /></label>
+          <label className="wide">URL segura de download<input type="url" value={form.download_url ?? ""} onChange={(event) => field("download_url", event.target.value || null)} placeholder="Opcional" /></label>
           <label className="wide">
             Descrição
             <textarea
@@ -483,6 +514,7 @@ function GamesPanel({
             />
             Jogo em destaque
           </label>
+          <label className="check"><input type="checkbox" checked={form.active ?? true} onChange={(event) => field("active", event.target.checked)} />Produto ativo</label>
         </div>
         <button className="primary">
           {editing ? "Salvar alterações" : "Criar jogo"}
@@ -517,14 +549,23 @@ function GamesPanel({
 }
 
 function OrdersPanel({ token, orders, onChange }: { token: string; orders: AdminOrder[]; onChange: () => void }) {
-  const labels = { paid: "Pago", processing: "Processando", completed: "Concluído", cancelled: "Cancelado" };
+  const labels = { processing: "Processando", completed: "Concluído", cancelled: "Cancelado" };
   const change = async (order: AdminOrder, status: AdminOrder["status"]) => { await updateOrderStatus(token, order.id, status); onChange(); };
   return <section className="orders-admin-list">
     {orders.length === 0 && <div className="admin-empty">Nenhum pedido recebido.</div>}
     {orders.map((order) => <article className="admin-order-card" key={order.id}>
       <header><div><small>PEDIDO #{order.id}</small><h3>{order.customer.name}</h3><span>{order.customer.email}</span></div><strong>{order.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></header>
       <div className="admin-order-items">{order.items.map((item) => <span key={item.id}>{item.quantity}× {item.title}</span>)}</div>
-      <footer><time>{new Date(order.createdAt).toLocaleString("pt-BR")}</time><select value={order.status} onChange={(event) => void change(order, event.target.value as AdminOrder["status"])}>{Object.entries(labels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></footer>
+      <footer><time>{new Date(order.createdAt).toLocaleString("pt-BR")}</time>{order.status === "paid" && <button className="danger" onClick={() => void refundOrder(token, order.id).then(onChange)}>Reembolsar</button>}{["paid", "processing"].includes(order.status) && <select defaultValue="" onChange={(event) => void change(order, event.target.value as AdminOrder["status"])}><option value="" disabled>Alterar status</option>{Object.entries(labels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>}<strong>{order.status}</strong></footer>
     </article>)}
   </section>;
+}
+
+function UsersPanel({ token, customers, onChange }: { token: string; customers: AdminCustomer[]; onChange: () => void }) {
+  return <div className="admin-table"><div className="admin-row admin-head"><span>Cliente</span><span>Pedidos</span><span>Status</span><span>Ações</span></div>{customers.map((customer) => <div className="admin-row" key={customer.id}><div><strong>{customer.name}</strong><small>{customer.email}</small></div><span>{customer.ordersCount ?? 0}</span><span>{customer.isActive ? "Ativo" : "Bloqueado"}</span><div><button onClick={() => void updateAdminUser(token, customer.id, { isActive: !customer.isActive, isAdmin: customer.isAdmin }).then(onChange)}>{customer.isActive ? "Bloquear" : "Ativar"}</button><button onClick={() => void updateAdminUser(token, customer.id, { isActive: customer.isActive, isAdmin: !customer.isAdmin }).then(onChange)}>{customer.isAdmin ? "Remover admin" : "Tornar admin"}</button></div></div>)}</div>;
+}
+
+function CouponsPanel({ token, coupons, onChange }: { token: string; coupons: AdminCoupon[]; onChange: () => void }) {
+  const [code, setCode] = useState(""); const [value, setValue] = useState(10); const [type, setType] = useState<"percentage" | "fixed">("percentage");
+  return <section><form className="admin-inline-form" onSubmit={(event) => { event.preventDefault(); void createAdminCoupon(token, { code, value, type, minimum_total: 0, active: true }).then(() => { setCode(""); onChange(); }); }}><input value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} placeholder="Código" required /><select value={type} onChange={(event) => setType(event.target.value as "percentage" | "fixed")}><option value="percentage">Percentual</option><option value="fixed">Valor fixo</option></select><input type="number" min="1" value={value} onChange={(event) => setValue(Number(event.target.value))} /><button>Criar cupom</button></form><div className="admin-table"><div className="admin-row admin-head"><span>Código</span><span>Desconto</span><span>Usos</span><span>Ações</span></div>{coupons.map((coupon) => <div className="admin-row" key={coupon.id}><strong>{coupon.code}</strong><span>{coupon.type === "percentage" ? `${coupon.value}%` : Number(coupon.value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span><span>{coupon.times_used}{coupon.usage_limit ? ` / ${coupon.usage_limit}` : ""}</span><div><button className="danger" onClick={() => void deleteAdminCoupon(token, coupon.id).then(onChange)}>Excluir</button></div></div>)}</div></section>;
 }

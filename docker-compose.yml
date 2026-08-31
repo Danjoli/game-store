@@ -1,0 +1,38 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: game_store
+      POSTGRES_USER: game_store
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U game_store"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    depends_on:
+      database:
+        condition: service_healthy
+    ports: ["8000:80"]
+  queue:
+    build: ./backend
+    env_file: ./backend/.env
+    command: ["php", "artisan", "queue:work", "--tries=3", "--backoff=10"]
+    depends_on:
+      database:
+        condition: service_healthy
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${PUBLIC_API_URL:-http://localhost:8000}
+        VITE_ANALYTICS_ID: ${VITE_ANALYTICS_ID:-}
+    depends_on: [backend]
+    ports: ["8080:80"]
+volumes:
+  postgres_data:

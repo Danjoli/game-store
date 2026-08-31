@@ -18,11 +18,14 @@ class DatabaseSeeder extends Seeder
         $this->call(CategorySeeder::class);
         $this->call(GameSeeder::class);
 
+        if (! env('DEMO_ADMIN_EMAIL')) {
+            return;
+        }
         User::query()->updateOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => env('DEMO_ADMIN_EMAIL')],
             [
                 'name' => 'Test User',
-                'password' => bcrypt('password'),
+                'password' => bcrypt(env('DEMO_ADMIN_PASSWORD')),
                 'is_admin' => true,
             ],
         );

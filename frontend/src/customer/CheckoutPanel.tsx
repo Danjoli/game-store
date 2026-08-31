@@ -5,7 +5,7 @@ import type { Address, CheckoutPayload } from "./types";
 
 type Props = { open: boolean; total: number; addresses: Address[]; onClose: () => void; onSubmit: (payload: CheckoutPayload) => Promise<void> };
 export function CheckoutPanel({ open, total, addresses, onClose, onSubmit }: Props) {
-  const [form, setForm] = useState<CheckoutPayload>({ payment_method: "pix", recipient_name: "", postal_code: "", address: "", city: "", state: "" });
+  const [form, setForm] = useState<CheckoutPayload>({ payment_method: "pix", recipient_name: "", postal_code: "", address: "", city: "", state: "", coupon_code: "" });
   const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [done, setDone] = useState(false);
   if (!open) return null;
   const field = (key: keyof CheckoutPayload, value: string) => setForm((current) => ({ ...current, [key]: value }));
@@ -19,7 +19,8 @@ export function CheckoutPanel({ open, total, addresses, onClose, onSubmit }: Pro
       <div className="form-pair"><label>CEP<input value={form.postal_code} onChange={(e) => field("postal_code", e.target.value)} required /></label><label>UF<input value={form.state} maxLength={2} onChange={(e) => field("state", e.target.value.toUpperCase())} required /></label></div>
       <label>Endereço completo<input value={form.address} onChange={(e) => field("address", e.target.value)} required /></label>
       <label>Cidade<input value={form.city} onChange={(e) => field("city", e.target.value)} required /></label>
-      <label>Pagamento<select value={form.payment_method} onChange={(e) => field("payment_method", e.target.value)}><option value="pix">PIX (aprovação imediata)</option><option value="credit_card">Cartão de crédito (simulado)</option></select></label>
+      <label>Pagamento<select value={form.payment_method} onChange={(e) => field("payment_method", e.target.value)}><option value="pix">PIX</option><option value="credit_card">Cartão de crédito</option></select></label>
+      <label>Cupom de desconto<input value={form.coupon_code ?? ""} onChange={(e) => field("coupon_code", e.target.value.toUpperCase())} placeholder="Opcional" /></label>
       {error && <p className="account-error">{error}</p>}<button className="account-primary" disabled={busy}><CreditCard /> {busy ? "Processando..." : "Confirmar pagamento"}</button>
     </form>}
   </section></div>;

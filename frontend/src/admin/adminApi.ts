@@ -3,6 +3,8 @@ import type {
   AdminCategory,
   AdminGame,
   AdminUser,
+  AdminCustomer,
+  AdminCoupon,
   DashboardStats,
   GamePayload,
   AdminOrder,
@@ -92,9 +94,19 @@ export async function updateGame(
 export async function deleteGame(token: string, id: number) {
   await api.delete(`/api/admin/games/${id}`, auth(token));
 }
+export async function uploadCover(token: string, image: File) {
+  const body = new FormData(); body.append("image", image);
+  return (await api.post<{ data: { url: string } }>("/api/admin/uploads/covers", body, auth(token))).data.data.url;
+}
 export async function getAdminOrders(token: string) {
   return (await api.get<{ data: AdminOrder[] }>("/api/admin/orders", auth(token))).data.data;
 }
 export async function updateOrderStatus(token: string, id: number, status: AdminOrder["status"]) {
   return (await api.patch<{ data: AdminOrder }>(`/api/admin/orders/${id}/status`, { status }, auth(token))).data.data;
 }
+export async function refundOrder(token: string, id: number) { return (await api.post<{ data: AdminOrder }>(`/api/admin/orders/${id}/refund`, {}, auth(token))).data.data; }
+export async function getAdminUsers(token: string) { return (await api.get<{ data: AdminCustomer[] }>("/api/admin/users", auth(token))).data.data; }
+export async function updateAdminUser(token: string, id: number, payload: Partial<Pick<AdminCustomer, "isActive" | "isAdmin">>) { return (await api.patch<{ data: AdminCustomer }>(`/api/admin/users/${id}`, { is_active: payload.isActive, is_admin: payload.isAdmin }, auth(token))).data.data; }
+export async function getAdminCoupons(token: string) { const result = await api.get<{ data: { data: AdminCoupon[] } }>("/api/admin/coupons", auth(token)); return result.data.data.data; }
+export async function createAdminCoupon(token: string, payload: object) { await api.post("/api/admin/coupons", payload, auth(token)); }
+export async function deleteAdminCoupon(token: string, id: number) { await api.delete(`/api/admin/coupons/${id}`, auth(token)); }

@@ -3,7 +3,10 @@ export type AdminUser = {
   name: string;
   email: string;
   isAdmin: boolean;
+  isActive: boolean;
 };
+export type AdminCustomer = AdminUser & { ordersCount?: number };
+export type AdminCoupon = { id: number; code: string; type: "percentage" | "fixed"; value: string; minimum_total: string; usage_limit: number | null; times_used: number; active: boolean };
 export type DashboardStats = {
   users: number;
   games: number;
@@ -15,7 +18,7 @@ export type DashboardStats = {
 };
 
 export type AdminOrder = {
-  id: number; status: "paid" | "processing" | "completed" | "cancelled";
+  id: number; status: "pending" | "paid" | "processing" | "completed" | "cancelled" | "refunded";
   total: number; paymentMethod: string; recipientName: string; createdAt: string;
   customer: AdminUser; items: { id: number; title: string; quantity: number; subtotal: number }[];
 };
@@ -41,6 +44,10 @@ export type AdminGame = {
   art: string;
   image: string;
   featured: boolean;
+  stock: number | null;
+  available: boolean;
+  active: boolean;
+  downloadUrl?: string | null;
 };
 
 export type GamePayload = {
@@ -55,4 +62,7 @@ export type GamePayload = {
   art: string;
   cover_image: string;
   featured: boolean;
+  stock?: number | null;
+  download_url?: string | null;
+  active?: boolean;
 };

@@ -34,6 +34,9 @@ class AuthController extends Controller
                 'email' => ['As credenciais informadas são inválidas.'],
             ]);
         }
+        if (! $user->is_active) {
+            throw ValidationException::withMessages(['email' => ['Esta conta está desativada.']]);
+        }
 
         return response()->json([
             'user' => new UserResource($user),

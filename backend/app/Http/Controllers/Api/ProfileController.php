@@ -27,4 +27,21 @@ class ProfileController extends Controller
 
         return response()->json(['message' => 'Senha atualizada.']);
     }
+
+    public function export(Request $request): JsonResponse
+    {
+        $user = $request->user()->load(['addresses', 'orders.items']);
+
+        return response()->json(['data' => ['profile' => new UserResource($user), 'addresses' => $user->addresses, 'orders' => $user->orders]]);
+    }
+
+    public function destroy(Request $request): JsonResponse
+    {
+        $request->validate(['password' => ['required', 'current_password']]);
+        $user = $request->user();
+        $user->tokens()->delete();
+        $user->delete();
+
+        return response()->json(['message' => 'Conta excluída.']);
+    }
 }

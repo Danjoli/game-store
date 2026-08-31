@@ -25,8 +25,15 @@ class GameRequest extends FormRequest
             'rating' => ['required', 'numeric', 'between:0,5'],
             'label' => ['nullable', 'string', 'max:30'],
             'art' => ['required', Rule::in(['neon', 'ashen', 'velocity', 'shadow', 'orbit', 'sector'])],
-            'cover_image' => ['required', 'string', 'max:255', 'starts_with:/covers/'],
+            'cover_image' => ['required', 'string', 'max:500', function (string $attribute, mixed $value, \Closure $fail): void {
+                if (! str_starts_with($value, '/covers/') && ! filter_var($value, FILTER_VALIDATE_URL)) {
+                    $fail('A capa deve ser um caminho de capa ou URL válida.');
+                }
+            }],
             'featured' => ['required', 'boolean'],
+            'stock' => ['nullable', 'integer', 'min:0', 'max:999999'],
+            'download_url' => ['nullable', 'url', 'max:1000'],
+            'active' => ['sometimes', 'boolean'],
         ];
     }
 }

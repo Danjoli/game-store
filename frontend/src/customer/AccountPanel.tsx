@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { LogOut, MapPin, Package, Settings, UserRound, X } from "lucide-react";
 import { formatCurrency } from "../utils/currency";
-import { createAddress, deleteAddress, forgotPassword, getAddresses, updatePassword, updateProfile } from "./customerApi";
+import { cancelOrder, createAddress, deleteAddress, deleteProfile, downloadOrderItem, exportProfile, forgotPassword, getAddresses, updatePassword, updateProfile } from "./customerApi";
 import type { Address, AddressPayload, Customer, Order } from "./types";
 
 type Props = {
@@ -10,10 +10,11 @@ type Props = {
   onRegister: (name: string, email: string, password: string) => Promise<void>;
   onLogout: () => void;
   token: string; addresses: Address[]; onUserChange: (user: Customer) => void; onAddressesChange: (addresses: Address[]) => void;
+  onOrdersChange: (orders: Order[]) => void;
 };
-const labels = { paid: "Pago", processing: "Em processamento", completed: "Concluído", cancelled: "Cancelado" };
+const labels = { pending: "Aguardando pagamento", paid: "Pago", processing: "Em processamento", completed: "Concluído", cancelled: "Cancelado", refunded: "Reembolsado" };
 
-export function AccountPanel({ open, user, orders, error, onClose, onLogin, onRegister, onLogout, token, addresses, onUserChange, onAddressesChange }: Props) {
+export function AccountPanel({ open, user, orders, error, onClose, onLogin, onRegister, onLogout, token, addresses, onUserChange, onAddressesChange, onOrdersChange }: Props) {
   const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
   const [profileTab, setProfileTab] = useState<"orders" | "settings" | "addresses">("orders");
   const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [password, setPassword] = useState("");
@@ -44,8 +45,9 @@ export function AccountPanel({ open, user, orders, error, onClose, onLogin, onRe
         <div className="profile-tabs"><button className={profileTab === "orders" ? "active" : ""} onClick={() => setProfileTab("orders")}><Package />Pedidos</button><button className={profileTab === "addresses" ? "active" : ""} onClick={() => setProfileTab("addresses")}><MapPin />Endereços</button><button className={profileTab === "settings" ? "active" : ""} onClick={() => setProfileTab("settings")}><Settings />Dados</button></div>
         {profileTab === "orders" && (orders.length === 0 ? <p className="empty-orders">Você ainda não realizou nenhum pedido.</p> : orders.map((order) => <article className="customer-order" key={order.id}>
           <header><div><strong>Pedido #{order.id}</strong><span>{new Date(order.createdAt).toLocaleDateString("pt-BR")}</span></div><b className={`status-${order.status}`}>{labels[order.status]}</b></header>
-          {order.items.map((item) => <div className="order-line" key={item.id}><span>{item.quantity}× {item.title}</span><strong>{formatCurrency(item.subtotal)}</strong></div>)}
+          {order.items.map((item) => <div className="order-line" key={item.id}><span>{item.quantity}× {item.title}</span><strong>{formatCurrency(item.subtotal)}</strong>{order.status === "completed" && <button onClick={() => void downloadOrderItem(token, order.id, item.id)}>Download</button>}</div>)}
           <footer><span>{order.paymentMethod === "pix" ? "PIX" : "Cartão de crédito"}</span><strong>{formatCurrency(order.total)}</strong></footer>
+          {(order.status === "pending" || order.status === "paid") && <button className="cancel-order" onClick={() => void cancelOrder(token, order.id).then((updated) => onOrdersChange(orders.map((item) => item.id === updated.id ? updated : item)))}>Cancelar pedido</button>}
         </article>))}
         {profileTab === "settings" && <SettingsForm token={token} user={user} onUserChange={onUserChange} />}
         {profileTab === "addresses" && <Addresses token={token} addresses={addresses} onChange={onAddressesChange} />}
@@ -56,7 +58,7 @@ export function AccountPanel({ open, user, orders, error, onClose, onLogin, onRe
 
 function SettingsForm({ token, user, onUserChange }: { token: string; user: Customer; onUserChange: (user: Customer) => void }) {
   const [name, setName] = useState(user.name); const [email, setEmail] = useState(user.email); const [current, setCurrent] = useState(""); const [next, setNext] = useState(""); const [message, setMessage] = useState("");
-  return <div className="settings-stack"><form className="account-form" onSubmit={(e) => { e.preventDefault(); void updateProfile(token, name, email).then((updated) => { onUserChange(updated); setMessage("Dados atualizados."); }); }}><h3>Dados pessoais</h3><label>Nome<input value={name} onChange={(e) => setName(e.target.value)} /></label><label>E-mail<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></label><button className="account-primary">Salvar dados</button></form><form className="account-form" onSubmit={(e) => { e.preventDefault(); void updatePassword(token, current, next).then(() => { setCurrent(""); setNext(""); setMessage("Senha atualizada."); }); }}><h3>Alterar senha</h3><label>Senha atual<input type="password" value={current} onChange={(e) => setCurrent(e.target.value)} required /></label><label>Nova senha<input type="password" minLength={8} value={next} onChange={(e) => setNext(e.target.value)} required /></label><button className="account-primary">Atualizar senha</button></form>{message && <p className="account-message">{message}</p>}</div>;
+  return <div className="settings-stack"><form className="account-form" onSubmit={(e) => { e.preventDefault(); void updateProfile(token, name, email).then((updated) => { onUserChange(updated); setMessage("Dados atualizados."); }); }}><h3>Dados pessoais</h3><label>Nome<input value={name} onChange={(e) => setName(e.target.value)} /></label><label>E-mail<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></label><button className="account-primary">Salvar dados</button></form><form className="account-form" onSubmit={(e) => { e.preventDefault(); void updatePassword(token, current, next).then(() => { setCurrent(""); setNext(""); setMessage("Senha atualizada."); }); }}><h3>Alterar senha</h3><label>Senha atual<input type="password" value={current} onChange={(e) => setCurrent(e.target.value)} required /></label><label>Nova senha<input type="password" minLength={8} value={next} onChange={(e) => setNext(e.target.value)} required /></label><button className="account-primary">Atualizar senha</button></form><div className="privacy-actions"><button onClick={() => void exportProfile(token)}>Baixar meus dados</button><button onClick={() => { const password = window.prompt("Confirme sua senha para excluir a conta"); if (password && window.confirm("Esta ação é permanente. Excluir sua conta?")) void deleteProfile(token, password).then(() => { localStorage.removeItem("customer_token"); window.location.assign("/"); }); }}>Excluir minha conta</button></div>{message && <p className="account-message">{message}</p>}</div>;
 }
 
 function Addresses({ token, addresses, onChange }: { token: string; addresses: Address[]; onChange: (addresses: Address[]) => void }) {

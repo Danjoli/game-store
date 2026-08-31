@@ -126,9 +126,17 @@ migrations.
 
 ## Roadmap
 
-- Expand automated end-to-end coverage
-- Integrate a production payment provider
-- Configure a transactional e-mail provider
+- Configure production credentials and deploy a staging environment
+- Review legal documents with qualified counsel
+- Expand browser coverage for provider sandbox flows
+
+## Production readiness
+
+The repository includes Docker images, GitHub Actions, unit/integration/browser
+test foundations, configurable Mercado Pago payments and webhooks, queued
+transactional e-mails, CORS/rate limits, uploads, stock, coupons, customer
+administration, legal pages and analytics hooks. Follow
+[DEPLOYMENT.md](DEPLOYMENT.md) to paste credentials and publish safely.
 
 ## Development workflow
 
