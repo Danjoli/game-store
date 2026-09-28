@@ -1,0 +1,28 @@
+name: Technical task
+description: Track maintenance, refactoring, tests or infrastructure work.
+title: "chore: "
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Explain the technical problem, risk or debt being addressed.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: State what is and is not included in this task.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] Change is implemented
+        - [ ] Tests and documentation are updated
+        - [ ] CI passes
+    validations:
+      required: true
