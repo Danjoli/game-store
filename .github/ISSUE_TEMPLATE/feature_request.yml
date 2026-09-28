@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose an improvement with clear customer or operational value.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What need or opportunity motivates this proposal?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the desired behavior without prescribing every implementation detail.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Expected value
+      description: Who benefits and how will the result be evaluated?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] Main scenario works
+        - [ ] Expected failures are handled
+        - [ ] Relevant tests are included
+    validations:
+      required: true
